@@ -1,15 +1,18 @@
 const express = require('express');
 const router = express.Router();
 
-// Targets the controller right next door inside src/
+// Import controllers
 const profileController = require('../controllers/profileController');
 
-// --- PLATFORM ENDPOINTS ---
+// Import your new security gatekeeper middleware
+const requireApiKey = require('../middleware/auth');
 
-// ROUTE 1: Public Dynamic Profile Lookups
+// --- HIGHWAY ROUTES ---
+
+// Public Route: Anyone can view a public profile state
 router.get('/profiles/:username', profileController.getPublicProfile);
 
-// ROUTE 2: Automated Data Synchronization
-router.post('/profiles/sync', profileController.syncMetrics);
+// Protected Ingestion Route: Requires a secure signature header to pass through
+router.post('/profiles/sync', requireApiKey, profileController.syncMetrics);
 
 module.exports = router;
